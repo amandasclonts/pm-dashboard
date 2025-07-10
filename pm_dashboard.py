@@ -1,8 +1,8 @@
 import streamlit as st
 import base64
-import openai
+from openai import OpenAI
 
-openai.api_key = st.secrets["openai"]["openai_api_key"]
+client = OpenAI(api_key=st.secrets["openai"]["openai_api_key"])
 
 st.set_page_config(page_title="AI Dashboard", layout="wide")
 
@@ -74,14 +74,21 @@ Contract Text:
 \"\"\"
 """
 
-                response = openai.ChatCompletion.create(
+                from openai import OpenAI
+
+                client = OpenAI(api_key=st.secrets["openai"]["openai_api_key"])
+
+                response = client.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": "You summarize and extract information from contracts for project managers."},
                         {"role": "user", "content": prompt}
                     ],
-                    temperature=0.4,
+                    temperature=0.4
                 )
+
+summary = response.choices[0].message.content
+
 
                 summary = response.choices[0].message.content
                 st.markdown("### 🤖 AI Summary")
